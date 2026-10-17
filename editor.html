@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Editor | Tab's Whispers</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #FAF6EF;
+        }
+
+        .editor-header {
+            background: #17182F;
+            color: #FAF6EF;
+            padding: 20px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .editor-brand {
+            font: 600 25px 'Cormorant Garamond', serif;
+            color: #D6B779;
+        }
+
+        .editor-header a {
+            color: #FAF6EF;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .editor-layout {
+            max-width: 1150px;
+            margin: auto;
+            padding: 35px 5%;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #8C713B;
+            font-size: 13px;
+            margin-bottom: 25px;
+            text-decoration: none;
+        }
+
+        .book-heading {
+            margin-bottom: 30px;
+        }
+
+        .book-heading .eyebrow {
+            color: #9A7B40;
+            letter-spacing: 2px;
+            font-size: 10px;
+        }
+
+        .book-heading h1 {
+            color: #17182F;
+            font: 500 42px 'Cormorant Garamond', serif;
+            margin: 10px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .book-heading p {
+            color: #77727A;
+            font-size: 13px;
+        }
+
+        .editor-columns {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .chapter-panel,
+        .writing-panel {
+            background: #FFFFFF;
+            border: 1px solid #EAE4DA;
+        }
+
+        .chapter-panel {
+            padding: 20px;
+        }
+
+        .chapter-panel h2 {
+            font: 500 25px 'Cormorant Garamond', serif;
+            color: #17182F;
+            margin-bottom: 15px;
+        }
+
+        .new-chapter-button,
+        .save-button {
+            background: #17182F;
+            color: #D6B779;
+            border: 1px solid #17182F;
+            padding: 12px 15px;
+            font: inherit;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .new-chapter-button {
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .chapter-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: #FAF6EF;
+            border: 1px solid transparent;
+            padding: 13px 10px;
+            margin-bottom: 8px;
+            color: #353440;
+            cursor: pointer;
+            overflow-wrap: anywhere;
+        }
+
+        .chapter-item.active {
+            border-color: #D6B779;
+            background: #F4EDDF;
+        }
+
+        .chapter-item small {
+            display: block;
+            color: #8C713B;
+            margin-top: 4px;
+        }
+
+        .empty-chapters {
+            color: #77727A;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .writing-panel {
+            padding: 25px;
+        }
+
+        .field-label {
+            display: block;
+            color: #8C713B;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin: 12px 0 8px;
+        }
+
+        .writing-panel input,
+        .writing-panel textarea {
+            width: 100%;
+            border: 1px solid #EAE4DA;
+            background: #FFFEFC;
+            color: #353440;
+            padding: 13px;
+            font: inherit;
+            border-radius: 0;
+        }
+
+        .writing-panel input:focus,
+        .writing-panel textarea:focus {
+            outline: 1px solid #B39454;
+        }
+
+        #chapterTitle {
+            font: 500 25px 'Cormorant Garamond', serif;
+        }
+
+        #chapterContent {
+            min-height: 380px;
+            margin-top: 5px;
+            line-height: 1.9;
+            resize: vertical;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        #saveStatus {
+            font-size: 12px;
+            color: #77727A;
+        }
+
+        .editor-note {
+            background: #F0E9DC;
+            color: #665943;
+            padding: 17px;
+            margin-top: 25px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .editor-footer {
+            text-align: center;
+            color: #77727A;
+            font-size: 12px;
+            padding: 30px 6%;
+        }
+
+        @media (max-width: 700px) {
+            .editor-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .book-heading h1 {
+                font-size: 35px;
+            }
+
+            .writing-panel {
+                padding: 17px;
+            }
+
+            #chapterContent {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="editor-header">
+    <a href="index.html" class="editor-brand">Tab's Whispers ✧</a>
+    <a href="studio.html">← My Library</a>
+</header>
+
+<main class="editor-layout">
+
+    <a href="studio.html" class="back-link">← Back to My Library</a>
+
+    <section class="book-heading">
+        <p class="eyebrow">YOUR PERSONAL WRITING SPACE</p>
+        <h1 id="bookTitle">Opening your book...</h1>
+        <p id="bookGenre"></p>
+    </section>
+
+    <div class="editor-columns">
+
+        <aside class="chapter-panel">
+            <h2>My Chapters</h2>
+
+            <button class="new-chapter-button" onclick="createChapter()">
+                + New Chapter
+            </button>
+
+            <div id="chapterList"></div>
+        </aside>
+
+        <section class="writing-panel">
+
+            <label class="field-label" for="chapterTitle">
+                CHAPTER TITLE
+            </label>
+
+            <input
+                id="chapterTitle"
+                type="text"
+                placeholder="Give this chapter a title..."
+            >
+
+            <label class="field-label" for="chapterContent">
+                YOUR STORY
+            </label>
+
+            <textarea
+                id="chapterContent"
+                placeholder="Take a breath. Let your imagination speak...
+
+Begin writing your story here."
+            ></textarea>
+
+            <div class="editor-toolbar">
+                <span id="saveStatus">Your chapter has not been saved yet.</span>
+
+                <button class="save-button" onclick="saveChapter()">
+                    Save Chapter
+                </button>
+            </div>
+
+        </section>
+
+    </div>
+
+    <div class="editor-note">
+        <strong>Protect your writing:</strong>
+        This early version saves chapters in this browser's local storage.
+        It does not provide secure accounts or cloud backups.
+        Keep a separate copy of important manuscripts until we build
+        and test secure storage.
+    </div>
+
+</main>
+
+<footer class="editor-footer">
+    Made for the worlds that live within you. ✧
+</footer>
+
+<script>
+    const STORAGE_KEY = "tabsWhispersBooks";
+
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get("book");
+
+    let books = [];
+    let currentBook = null;
+    let activeChapterId = null;
+    let editingChapterId = null;
+    let editorTimer = null;
+
+    const titleInput = document.getElementById("chapterTitle");
+    const contentInput = document.getElementById("chapterContent");
+    const saveStatus = document.getElementById("saveStatus");
+
+    function loadBooks() {
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem(STORAGE_KEY) || "[]"
+            );
+
+            books = Array.isArray(saved) ? saved : [];
+        } catch (error) {
+            books = [];
+        }
+
+        currentBook = books.find(function(book) {
+            return book.id === bookId;
+        }) || null;
+
+        if (!currentBook) {
+            document.getElementById("bookTitle").textContent =
+                "Book not found";
+
+            document.getElementById("bookGenre").textContent =
+                "Return to your library and open your book again.";
+
+            document.querySelector(".editor-columns").style.display = "none";
+            return false;
+        }
+
+        if (!Array.isArray(currentBook.chapters)) {
+            currentBook.chapters = [];
+        }
+
+        document.getElementById("bookTitle").textContent =
+            currentBook.title;
+
+        document.getElementById("bookGenre").textContent =
+            currentBook.genre || "Uncategorised";
+
+        return true;
+    }
+
+    function persistBooks() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+            return true;
+        } catch (error) {
+            alert(
+                "Your browser could not save your changes. " +
+                "Please copy your chapter somewhere safe."
+            );
+            return false;
+        }
+    }
+
+    function createChapter() {
+        if (!currentBook) return;
+
+        const previousChapterId = activeChapterId;
+
+        const chapter = {
+            id: Date.now().toString() + Math.random().toString(16).slice(2),
+            title: "Untitled Chapter",
+            content: "",
+            updated: new Date().toLocaleString()
+        };
+
+        currentBook.chapters.push(chapter);
+
+        if (!persistBooks()) {
+            currentBook.chapters.pop();
+            activeChapterId = previousChapterId;
+            return;
+        }
+
+        activeChapterId = chapter.id;
+        renderChapters();
+        openChapter(chapter.id);
+        titleInput.focus();
+        titleInput.select();
+    }
+
+    function renderChapters() {
+        const list = document.getElementById("chapterList");
+        list.replaceChildren();
+
+        if (!currentBook || currentBook.chapters.length === 0) {
+            const message = document.createElement("p");
+            message.className = "empty-chapters";
+            message.textContent =
+                "Your chapters will appear here. Create your first chapter to begin.";
+            list.appendChild(message);
+            return;
+        }
+
+        currentBook.chapters.forEach(function(chapter, index) {
+            const button = document.createElement("button");
+            button.className = "chapter-item";
+
+            if (chapter.id === activeChapterId) {
+                button.classList.add("active");
+            }
+
+            const name = document.createElement("span");
+            name.textContent = chapter.title || "Untitled Chapter";
+
+            const number = document.createElement("small");
+            number.textContent = "Chapter " + (index + 1);
+
+            button.append(name, number);
+
+            button.onclick = function() {
+                openChapter(chapter.id);
+            };
+
+            list.appendChild(button);
+        });
+    }
+
+    function openChapter(id) {
+        if (!currentBook) return;
+
+        const chapter = currentBook.chapters.find(function(item) {
+            return item.id === id;
+        });
+
+        if (!chapter) return;
+
+        clearTimeout(editorTimer);
+
+        activeChapterId = id;
+        editingChapterId = id;
+
+        titleInput.value = chapter.title || "";
+        contentInput.value = chapter.content || "";
+
+        saveStatus.textContent = "Saved chapter loaded.";
+        renderChapters();
+    }
+
+    function saveChapter() {
+        if (!currentBook || !activeChapterId) {
+            alert("Create a chapter before saving.");
+            return;
+        }
+
+        const chapter = currentBook.chapters.find(function(item) {
+            return item.id === activeChapterId;
+        });
+
+        if (!chapter) return;
+
+        const oldTitle = chapter.title;
+        const oldContent = chapter.content;
+        const oldUpdated = chapter.updated;
+
+        chapter.title = titleInput.value.trim() || "Untitled Chapter";
+        chapter.content = contentInput.value;
+        chapter.updated = new Date().toLocaleString();
+
+        saveStatus.textContent = "Saving...";
+
+        if (!persistBooks()) {
+            chapter.title = oldTitle;
+            chapter.content = oldContent;
+            chapter.updated = oldUpdated;
+            saveStatus.textContent = "Save failed.";
+            return;
+        }
+
+        saveStatus.textContent = "Saved on this device at " +
+            new Date().toLocaleTimeString();
+
+        renderChapters();
+    }
+
+    function scheduleAutoSave() {
+        if (!activeChapterId) return;
+
+        saveStatus.textContent = "Unsaved changes...";
+
+        clearTimeout(editorTimer);
+
+        editorTimer = setTimeout(function() {
+            saveChapter();
+        }, 1200);
+    }
+
+    titleInput.addEventListener("input", scheduleAutoSave);
+    contentInput.addEventListener("input", scheduleAutoSave);
+
+    if (loadBooks()) {
+        renderChapters();
+
+        if (currentBook.chapters.length > 0) {
+            openChapter(currentBook.chapters[0].id);
+        } else {
+            saveStatus.textContent =
+                "Create your first chapter to start writing.";
+        }
+    }
+</script>
+
+</body>
+                                        </html>
