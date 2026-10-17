@@ -174,11 +174,23 @@
         }
 
         #chapterContent {
-            min-height: 380px;
-            margin-top: 5px;
-            line-height: 1.9;
-            resize: vertical;
-        }
+    min-height: 55vh;
+    margin-top: 5px;
+    padding: 20px;
+    line-height: 2;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.writing-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    color: #77727A;
+    font-size: 12px;
+}
 
         .editor-toolbar {
             display: flex;
@@ -281,9 +293,14 @@
 
 Begin writing your story here."
             ></textarea>
+            
+            <div class="writing-stats">
+    <span id="wordCount">0 words</span>
+    <span id="characterCount">0 characters</span>
+</div>
 
             <div class="editor-toolbar">
-                <span id="saveStatus">Your chapter has not been saved yet.</span>
+                <span id="saveStatus">Ready to write</span>
 
                 <button class="save-button" onclick="saveChapter()">
                     Save Chapter
