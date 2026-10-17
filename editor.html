@@ -340,6 +340,20 @@ Begin writing your story here."
     const titleInput = document.getElementById("chapterTitle");
     const contentInput = document.getElementById("chapterContent");
     const saveStatus = document.getElementById("saveStatus");
+    const wordCount = document.getElementById("wordCount");
+const characterCount = document.getElementById("characterCount");
+
+function updateWritingStats() {
+    const text = contentInput.value.trim();
+
+    const words = text ? text.split(/\s+/).length : 0;
+    const characters = contentInput.value.length;
+
+    wordCount.textContent = words + (words === 1 ? " word" : " words");
+
+    characterCount.textContent =
+        characters + (characters === 1 ? " character" : " characters");
+}
 
     function loadBooks() {
         try {
@@ -474,8 +488,9 @@ Begin writing your story here."
         titleInput.value = chapter.title || "";
         contentInput.value = chapter.content || "";
 
-        saveStatus.textContent = "Saved chapter loaded.";
-        renderChapters();
+        updateWritingStats();
+saveStatus.textContent = "Saved chapter loaded.";
+renderChapters();
     }
 
     function saveChapter() {
@@ -508,10 +523,12 @@ Begin writing your story here."
             return;
         }
 
-        saveStatus.textContent = "Saved on this device at " +
-            new Date().toLocaleTimeString();
-
+        saveStatus.textContent = "✓ All changes saved at " +
+    new Date().toLocaleString();
         renderChapters();
+    }
+    function updateSaveStatus(message) {
+    saveStatus.textContent = message;
     }
 
     function scheduleAutoSave() {
@@ -526,9 +543,15 @@ Begin writing your story here."
         }, 1200);
     }
 
-    titleInput.addEventListener("input", scheduleAutoSave);
-    contentInput.addEventListener("input", scheduleAutoSave);
+    titleInput.addEventListener("input", function() {
+    updateWritingStats();
+    scheduleAutoSave();
+});
 
+contentInput.addEventListener("input", function() {
+    updateWritingStats();
+    scheduleAutoSave();
+});
     if (loadBooks()) {
         renderChapters();
 
