@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Writing Studio | Tab's Whispers</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background: #FAF6EF;
+        }
+
+        .studio-header {
+            background: #17182F;
+            color: #FAF6EF;
+            padding: 25px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .studio-header h1 {
+            color: #D6B779;
+            font-size: 28px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .studio-header a {
+            color: #FAF6EF;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .studio-main {
+            max-width: 1050px;
+            margin: auto;
+            padding: 55px 6%;
+        }
+
+        .studio-intro {
+            margin-bottom: 35px;
+        }
+
+        .studio-intro .eyebrow {
+            color: #9A7B40;
+            letter-spacing: 3px;
+            font-size: 10px;
+        }
+
+        .studio-intro h2 {
+            color: #17182F;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            margin: 12px 0;
+        }
+
+        .studio-intro p {
+            color: #77727A;
+            font-size: 14px;
+        }
+
+        .studio-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 25px 0 35px;
+        }
+
+        .studio-actions button {
+            background: #17182F;
+            color: #D6B779;
+            border: 1px solid #17182F;
+            padding: 13px 20px;
+            cursor: pointer;
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .studio-actions button:hover {
+            background: #292A49;
+        }
+
+        .studio-section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            color: #17182F;
+            margin-bottom: 18px;
+        }
+
+        .empty-library {
+            background: white;
+            border: 1px solid #EAE4DA;
+            padding: 40px 25px;
+            text-align: center;
+        }
+
+        .empty-library .symbol {
+            color: #B39454;
+            font-size: 32px;
+        }
+
+        .empty-library h3 {
+            color: #17182F;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 27px;
+            margin: 12px 0;
+        }
+
+        .empty-library p {
+            color: #77727A;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .book-card {
+            background: white;
+            border: 1px solid #EAE4DA;
+            padding: 23px;
+        }
+
+        .book-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 25px;
+            color: #17182F;
+        }
+
+        .book-card p {
+            color: #77727A;
+            font-size: 13px;
+            margin: 10px 0 18px;
+            white-space: pre-wrap;
+        }
+
+        .book-card button {
+            background: transparent;
+            border: 1px solid #B39454;
+            padding: 9px 13px;
+            margin: 4px 4px 0 0;
+            cursor: pointer;
+            color: #6D562C;
+        }
+
+        .studio-notice {
+            margin-top: 30px;
+            padding: 17px;
+            background: #F0E9DC;
+            color: #665943;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .studio-footer {
+            text-align: center;
+            padding: 30px 6%;
+            color: #77727A;
+            font-size: 12px;
+        }
+
+        @media (max-width: 500px) {
+            .studio-header h1 {
+                font-size: 22px;
+            }
+
+            .studio-intro h2 {
+                font-size: 35px;
+            }
+
+            .studio-main {
+                padding-top: 38px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="studio-header">
+        <h1>Tab's Whispers ✧</h1>
+        <a href="index.html">← Return Home</a>
+    </header>
+
+    <main class="studio-main">
+
+        <section class="studio-intro">
+            <p class="eyebrow">YOUR PRIVATE CREATIVE CORNER</p>
+
+            <h2>Welcome to your studio.</h2>
+
+            <p>
+                Take a breath. Leave the noise behind.
+                Your next story begins here.
+            </p>
+        </section>
+
+        <div class="studio-actions">
+            <button onclick="createBook()">＋ Create a New Book</button>
+        </div>
+
+        <section>
+            <h2 class="studio-section-title">My Library</h2>
+
+            <div id="bookList" class="book-list"></div>
+
+            <div id="emptyLibrary" class="empty-library">
+                <div class="symbol">✧</div>
+
+                <h3>Your worlds are waiting.</h3>
+
+                <p>
+                    Your library is empty for now.
+                    Create your first book and give your imagination a home.
+                </p>
+
+                <button onclick="createBook()" class="button-primary">
+                    Create Your First Book
+                </button>
+            </div>
+        </section>
+
+        <div class="studio-notice">
+            <strong>A note about your manuscripts:</strong>
+            This is an early demonstration of your writing studio.
+            Books are currently saved only in this browser on this device.
+            They are not backed up to an account or cloud storage.
+            Do not use this version as the only copy of important,
+            unpublished writing. We will add secure storage later.
+        </div>
+
+    </main>
+
+    <footer class="studio-footer">
+        Made for the worlds that live within you. ✧
+    </footer>
+
+    <script>
+        let books = [];
+
+        try {
+            books = JSON.parse(
+                localStorage.getItem("tabsWhispersBooks") || "[]"
+            );
+
+            if (!Array.isArray(books)) {
+                books = [];
+            }
+        } catch (error) {
+            books = [];
+        }
+
+        function saveBooks() {
+            try {
+                localStorage.setItem(
+                    "tabsWhispersBooks",
+                    JSON.stringify(books)
+                );
+                return true;
+            } catch (error) {
+                alert("Your browser could not save the book. Please check your storage settings.");
+                return false;
+            }
+        }
+
+        function createBook() {
+            const title = prompt("What is the title of your book?");
+
+            if (!title || !title.trim()) {
+                return;
+            }
+
+            const genre = prompt(
+                "What genre is your book? For example: Romance, Fantasy, Thriller."
+            ) || "Uncategorised";
+
+            books.push({
+                id: Date.now().toString(),
+                title: title.trim(),
+                genre: genre.trim() || "Uncategorised",
+                chapters: [],
+                created: new Date().toLocaleDateString()
+            });
+
+            if (saveBooks()) {
+                renderBooks();
+            } else {
+                books.pop();
+            }
+        }
+
+        function renderBooks() {
+            const list = document.getElementById("bookList");
+            const empty = document.getElementById("emptyLibrary");
+
+            list.replaceChildren();
+            empty.style.display = books.length ? "none" : "block";
+
+            books.forEach(function(book) {
+                const card = document.createElement("article");
+                card.className = "book-card";
+
+                const title = document.createElement("h3");
+                title.textContent = book.title;
+
+                const details = document.createElement("p");
+                details.textContent =
+                    book.genre + " · " +
+                    (book.chapters || []).length + " chapters";
+
+                const openButton = document.createElement("button");
+                openButton.textContent = "Open Book";
+                openButton.onclick = function() {
+                    window.location.href =
+                        "editor.html?book=" + encodeURIComponent(book.id);
+                };
+
+                const renameButton = document.createElement("button");
+                renameButton.textContent = "Rename";
+                renameButton.onclick = function() {
+                    renameBook(book.id);
+                };
+
+                card.append(title, details, openButton, renameButton);
+                list.appendChild(card);
+            });
+        }
+
+        function renameBook(id) {
+            const book = books.find(function(item) {
+                return item.id === id;
+            });
+
+            if (!book) return;
+
+            const newTitle = prompt("Enter the new book title:", book.title);
+
+            if (!newTitle || !newTitle.trim()) return;
+
+            const previousTitle = book.title;
+            book.title = newTitle.trim();
+
+            if (!saveBooks()) {
+                book.title = previousTitle;
+                return;
+            }
+
+            renderBooks();
+        }
+
+        renderBooks();
+    </script>
+
+</body>
+  </html>
