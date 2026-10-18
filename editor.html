@@ -104,11 +104,45 @@
             font-size: 12px;
             cursor: pointer;
         }
+        .editor-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.editor-actions button {
+    padding: 12px;
+}
+
+@media (max-width: 480px) {
+    .editor-actions {
+        width: 100%;
+    }
+
+    .editor-actions button {
+        flex: 1;
+    }
+}
 
         .new-chapter-button {
             width: 100%;
             margin-bottom: 18px;
         }
+        .chapter-management {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.chapter-management button {
+    flex: 1;
+    padding: 9px 5px;
+    background: #FAF6EF;
+    border: 1px solid #D6B779;
+    color: #6D562C;
+    font-size: 12px;
+    cursor: pointer;
+}
 
         .chapter-item {
             display: block;
@@ -265,10 +299,15 @@
             <h2>My Chapters</h2>
 
             <button class="new-chapter-button" onclick="createChapter()">
-                + New Chapter
-            </button>
+    + New Chapter
+</button>
 
-            <div id="chapterList"></div>
+<div class="chapter-management">
+    <button type="button" onclick="renameCurrentChapter()">✎ Rename</button>
+    <button type="button" onclick="deleteCurrentChapter()">🗑 Delete</button>
+</div>
+
+<div id="chapterList"></div>
         </aside>
 
         <section class="writing-panel">
@@ -302,10 +341,19 @@ Begin writing your story here."
             <div class="editor-toolbar">
                 <span id="saveStatus">Ready to write</span>
 
-                <button class="save-button" onclick="saveChapter()">
-                    Save Chapter
-                </button>
-            </div>
+                <div class="editor-toolbar">
+    <span id="saveStatus">Ready to write</span>
+
+    <div class="editor-actions">
+        <button class="save-button" onclick="saveChapter()">
+            Save Chapter
+        </button>
+
+        <button class="save-button" onclick="exportManuscript()">
+            Download Book
+        </button>
+    </div>
+</div>
 
         </section>
 
@@ -492,6 +540,87 @@ function updateWritingStats() {
 saveStatus.textContent = "Saved chapter loaded.";
 renderChapters();
     }
+    function renameCurrentChapter() {
+    if (!currentBook || !activeChapterId) {
+        alert("Please select a chapter first.");
+        return;
+    }
+
+    const chapter = currentBook.chapters.find(
+        item => item.id === activeChapterId
+    );
+
+    if (!chapter) return;
+
+    const newTitle = prompt(
+        "Enter the new chapter title:",
+        chapter.title
+    );
+
+    if (newTitle === null || !newTitle.trim()) return;
+
+    const oldTitle = chapter.title;
+    const oldUpdated = chapter.updated;
+
+    chapter.title = newTitle.trim();
+    chapter.updated = new Date().toLocaleString();
+
+    if (!persistBooks()) {
+        chapter.title = oldTitle;
+        chapter.updated = oldUpdated;
+        return;
+    }
+
+    titleInput.value = chapter.title;
+    saveStatus.textContent =
+        "✓ Chapter renamed at " + new Date().toLocaleString();
+
+    renderChapters();
+}
+
+function deleteCurrentChapter() {
+    if (!currentBook || !activeChapterId) {
+        alert("Please select a chapter first.");
+        return;
+    }
+
+    const chapter = currentBook.chapters.find(
+        item => item.id === activeChapterId
+    );
+
+    if (!chapter) return;
+
+    const confirmed = confirm(
+        'Are you sure you want to delete "' +
+        chapter.title +
+        '"? This cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    const oldChapters = [...currentBook.chapters];
+    const oldActiveId = activeChapterId;
+
+    currentBook.chapters = currentBook.chapters.filter(
+        item => item.id !== activeChapterId
+    );
+
+    if (!persistBooks()) {
+        currentBook.chapters = oldChapters;
+        activeChapterId = oldActiveId;
+        return;
+    }
+
+    activeChapterId = null;
+    editingChapterId = null;
+    titleInput.value = "";
+    contentInput.value = "";
+
+    saveStatus.textContent = "Chapter deleted.";
+
+    renderChapters();
+    updateWritingStats();
+}
 
     function saveChapter() {
         if (!currentBook || !activeChapterId) {
@@ -526,6 +655,56 @@ renderChapters();
         saveStatus.textContent = "✓ All changes saved at " +
     new Date().toLocaleString();
         renderChapters();
+    }
+    function exportManuscript() {
+    if (!currentBook) {
+        alert("No book is currently open.");
+        return;
+    }
+
+    if (activeChapterId) {
+        const activeChapter = currentBook.chapters.find(
+            item => item.id === activeChapterId
+        );
+
+        if (activeChapter) {
+            activeChapter.title =
+                titleInput.value.trim() || "Untitled Chapter";
+
+            activeChapter.content = contentInput.value;
+            activeChapter.updated = new Date().toLocaleString();
+
+            if (!persistBooks()) return;
+        }
+    }
+
+    let manuscript = currentBook.title + "\n";
+    manuscript += "Genre: " + currentBook.genre + "\n\n";
+
+    currentBook.chapters.forEach((chapter, index) => {
+        manuscript +=
+            "CHAPTER " + (index + 1) + "\n" +
+            (chapter.title || "Untitled Chapter") + "\n\n" +
+            (chapter.content || "") + "\n\n" +
+            "----------------------------------------\n\n";
+    });
+
+    const blob = new Blob([manuscript], {
+        type: "text/plain;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = (currentBook.title || "My Manuscript")
+        .replace(/[\\/:*?"<>|]/g, "_") + ".txt";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
     function updateSaveStatus(message) {
     saveStatus.textContent = message;
